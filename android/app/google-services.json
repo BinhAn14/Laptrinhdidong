@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "359652393085",
+    "project_id": "doan-803f6",
+    "storage_bucket": "doan-803f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359652393085:android:e32439ec06312f4a1cf114",
+        "android_client_info": {
+          "package_name": "com.example.zing_mp3_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "359652393085-hrgbh9r1ir1gemsobjv0mpdltg12raik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNoEeMa53YO-0U54GouFMZWXG-BpqmNZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359652393085-hrgbh9r1ir1gemsobjv0mpdltg12raik.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "359652393085-7rbnur344j91otcoknq57m0nqpl1pk69.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.zingMp3Clone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
