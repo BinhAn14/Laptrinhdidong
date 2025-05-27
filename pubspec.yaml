@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.0.9
   fl_chart: ^0.65.0
   firebase_database: ^11.3.5
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:
