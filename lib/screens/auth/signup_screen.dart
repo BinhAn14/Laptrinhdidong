@@ -31,6 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       await _firestore.collection('users').doc(userCredential.user?.uid).set({
         'email': email,
         'name': 'Tên người dùng',
+        'role': 'user',
         'createdAt': FieldValue.serverTimestamp(),
       });
 

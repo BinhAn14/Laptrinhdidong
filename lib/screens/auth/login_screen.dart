@@ -32,18 +32,18 @@ class _LoginScreenState extends State<LoginScreen> {
       _isSubmitting = true;
     });
 
-    if (email == 'admin' && password == '000000') {
-      Navigator.of(context).pushReplacementNamed(AdminScreen.routeName);
-      return true;
-    }
-
     try {
+      // Validate email
       if (Validator.email(email) == false) {
         throw MyException('Email không hợp lệ.');
       }
+
+      // Validate password
       if (password.length < 6) {
         throw MyException('Mật khẩu phải ít nhất 6 ký tự.');
       }
+
+      // Đăng nhập với Firebase
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
@@ -51,17 +51,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = userCredential.user!;
 
+      // Lấy thông tin user từ Firestore
       final firestore = FirebaseFirestore.instance;
       final documentSnapshot =
           await firestore.collection('users').doc(user.uid).get();
+
       final map = documentSnapshot.data();
+
+      if (map == null) {
+        throw MyException('Không tìm thấy dữ liệu người dùng.');
+      }
+
+      // Lấy playlist người dùng
       final querySnapshot = await firestore
           .collection('users')
           .doc(user.uid)
           .collection('user_playlists')
           .get();
+
       final mapPlaylist = querySnapshot.docs;
       List<Playlist> userPlaylists = [];
+
       if (mapPlaylist.isNotEmpty) {
         for (var query in mapPlaylist) {
           final playlist = Playlist.fromMapFirebase(query.data(), query.id);
@@ -69,22 +79,32 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
 
+      // Lưu thông tin account vào Config
       Config.instance.myAccount = Account(
-          uid: user.uid,
-          name: map!['name'],
-          email: email,
-          userPlaylists: userPlaylists);
+        uid: user.uid,
+        name: map['name'],
+        email: email,
+        role: map['role'] ?? 'user',
+        userPlaylists: userPlaylists,
+      );
 
       await Config.instance.saveAccountInfo();
       await Config.instance.saveAccountPlaylists();
 
-      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      // Chuyển trang theo quyền role
+      if (map['role'] == 'admin') {
+        Navigator.of(context).pushReplacementNamed(AdminScreen.routeName);
+      } else {
+        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      }
+
       return true;
     } on MyException catch (error) {
       MyDialog.show(context, 'Lỗi', error.toString());
     } on FirebaseAuthException catch (error) {
       print('FirebaseAuthException: ${error.code} - ${error.message}');
       String errorMessage = 'Lỗi không xác định!\n(Firebase Auth)';
+
       if (error.code == 'user-not-found') {
         errorMessage = 'Tài khoản không tồn tại.';
       } else if (error.code == 'wrong-password') {
@@ -92,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (error.code == 'invalid-credential') {
         errorMessage = 'Thông tin xác thực không hợp lệ. Vui lòng thử lại.';
       }
+
       MyDialog.show(context, 'Lỗi', errorMessage);
     } catch (error) {
       print('Exception: $error');
@@ -102,6 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isSubmitting = false;
       });
     }
+
     return false;
   }
 

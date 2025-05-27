@@ -17,6 +17,7 @@ class Config {
     await prefs.setString('account_uid', myAccount!.uid);
     await prefs.setString('account_email', myAccount!.email);
     await prefs.setString('account_name', myAccount!.name);
+    await prefs.setString('account_role', myAccount!.role);
   }
 
   // Lưu danh sách playlist của tài khoản hiện hành
@@ -34,6 +35,7 @@ class Config {
     final uid = prefs.getString('account_uid') ?? "";
     final email = prefs.getString('account_email') ?? "";
     final name = prefs.getString('account_name') ?? "";
+    final role = prefs.getString('account_role') ?? "user";
 
     final listStringMap = prefs.getStringList('account_playlists') ?? [];
     final playlists = listStringMap.map((e) {
@@ -41,7 +43,11 @@ class Config {
       return Playlist.fromMap(map, map['id']);
     }).toList();
 
-    myAccount =
-        Account(uid: uid, name: name, email: email, userPlaylists: playlists);
+    myAccount = Account(
+        uid: uid,
+        name: name,
+        email: email,
+        role: role,
+        userPlaylists: playlists);
   }
 }
