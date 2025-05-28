@@ -43,7 +43,8 @@ class ExplorerPage extends StatelessWidget {
                       'Xem thêm',
                     ),
                     style: TextButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white),
                   ),
                 ],
               ),
