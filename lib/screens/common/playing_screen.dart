@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,9 +17,19 @@ class PlayingScreen extends StatefulWidget {
   State<PlayingScreen> createState() => _PlayingScreenState();
 }
 
-class _PlayingScreenState extends State<PlayingScreen> {
+class _PlayingScreenState extends State<PlayingScreen> with SingleTickerProviderStateMixin {
   late bool isPlaying;
   late bool isShuffle;
+  late AnimationController _rotationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,10 +158,19 @@ class _PlayingScreenState extends State<PlayingScreen> {
                             ),
                           ),
                         )
-                      : CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: NetworkImage(playingMusic.imageUrl),
-                          radius: screenWidth / 3.2,
+                      : AnimatedBuilder(
+                          animation: _rotationController,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: NetworkImage(playingMusic.imageUrl),
+                            radius: screenWidth / 3.2,
+                          ),
+                          builder: (context, child) {
+                            return Transform.rotate(
+                              angle: _rotationController.value * 2 * 3.1415926535,
+                              child: child,
+                            );
+                          },
                         ),
                   Padding(
                     padding:
@@ -197,6 +216,11 @@ class _PlayingScreenState extends State<PlayingScreen> {
                                 setState(() {
                                   controller.togglePlay();
                                 });
+                                if (controller.state == MyPlayerState.playing) {
+                                  _rotationController.repeat();
+                                } else {
+                                  _rotationController.stop();
+                                }
                               },
                             ),
                             IconButton(
@@ -265,5 +289,11 @@ class _PlayingScreenState extends State<PlayingScreen> {
         const SnackBar(content: Text('Lỗi khi tải về bài nhạc')),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
   }
 }

@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
 import 'welcome_screen.dart';
 import 'package:zing_mp3_clone/controllers/player_controller.dart'; // hoặc đường dẫn đúng của bạn
+import 'package:provider/provider.dart';
+import 'package:zing_mp3_clone/themes/theme_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   static const routeName = '/account';
@@ -80,12 +83,16 @@ class _AccountScreenState extends State<AccountScreen> {
       return ListTile(
         leading: Icon(
           icon,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.inversePrimary,
           size: 28,
         ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 20, 
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.inversePrimary
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
         onTap: onTap,
@@ -95,20 +102,20 @@ class _AccountScreenState extends State<AccountScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_backspace_rounded,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.inversePrimary,
           ),
         ),
         titleSpacing: 0,
-        title: const Text(
+        title: Text(
           'Tài khoản cá nhân',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
         ),
       ),
       body: Column(
@@ -153,14 +160,18 @@ class _AccountScreenState extends State<AccountScreen> {
           const SizedBox(height: 40),
           // Button to change name
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.edit,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.inversePrimary,
               size: 28,
             ),
-            title: const Text(
+            title: Text(
               'Đổi tên',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.inversePrimary
+              ),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
@@ -187,6 +198,34 @@ class _AccountScreenState extends State<AccountScreen> {
                       child: const Text('Hủy'),
                     ),
                   ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          // Theme toggle
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return ListTile(
+                leading: Icon(
+                  Icons.dark_mode,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  size: 28,
+                ),
+                title: Text(
+                  'Chế độ tối',
+                  style: TextStyle(
+                    fontSize: 20, 
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.inversePrimary
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                trailing: Switch(
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme();
+                  },
                 ),
               );
             },

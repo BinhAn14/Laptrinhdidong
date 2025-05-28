@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 100, horizontal: 30),
-                child: Text("Chào mừng đến với ứng dụng nghe nhạc trực tuyến",
+                child: Text("Chào mừng đến với ứng dụng nghe nhạc trực tuyến Zing MP3",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 34,

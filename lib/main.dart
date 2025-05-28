@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zing_mp3_clone/themes/theme_provider.dart';
+import 'package:zing_mp3_clone/themes/light_mode.dart';
+import 'package:zing_mp3_clone/themes/dark_mode.dart';
 
 import 'screens/explorer/all_playlists_screen.dart';
 import 'screens/admin/admin_screen.dart';
@@ -31,7 +35,14 @@ void main() async {
   // await PlayingLogProvider.instance.fetchAndSetData();
   // await RankedMusicProvider.instance.countAndSort();
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -50,38 +61,50 @@ class MyApp extends StatelessWidget {
         future: loadPreferences(),
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Align(
-                alignment: Alignment.topCenter,
-                child: LinearProgressIndicator());
-          }
-          return MaterialApp(
-              title: 'Zing MP3',
-              theme: ThemeData(
-                primaryColor: const Color(0xFF814C9E),
-                hintColor: const Color(0xFF797979),
-                fontFamily: 'Open Sans',
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-              debugShowCheckedModeBanner: false,
-              initialRoute: Config.instance.myAccount == null
-                  ? WelcomeScreen.routeName
-                  : HomeScreen.routeName,
-              routes: {
-                WelcomeScreen.routeName: (ctx) => const WelcomeScreen(),
-                LoginScreen.routeName: (ctx) => const LoginScreen(),
-                SignUpScreen.routeName: (ctx) => const SignUpScreen(),
-                ForgotScreen.routeName: (ctx) => const ForgotScreen(),
-                HomeScreen.routeName: (ctx) => const HomeScreen(),
-                AccountScreen.routeName: (ctx) => const AccountScreen(),
-                SearchScreen.routeName: (ctx) => const SearchScreen(),
-                PlayingScreen.routeName: (ctx) => const PlayingScreen(),
-                PlaylistScreen.routeName: (ctx) => const PlaylistScreen(),
-                AllPlaylistsScreen.routeName: (ctx) =>
-                    const AllPlaylistsScreen(),
-                AdminScreen.routeName: (ctx) => const AdminScreen(),
-                MusicManagerScreen.routeName: (ctx) => MusicManagerScreen(),
-                PlaylistManagerScreen.routeName: (ctx) =>
-                    const PlaylistManagerScreen(),
-              });
+            );
+          }
+
+          return Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                title: 'Zing MP3',
+                theme: lightMode,
+                darkTheme: darkMode,
+                themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+                debugShowCheckedModeBanner: false,
+                builder: (context, child) {
+                  return Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: child!,
+                  );
+                },
+                initialRoute: Config.instance.myAccount == null
+                    ? WelcomeScreen.routeName
+                    : HomeScreen.routeName,
+                routes: {
+                  WelcomeScreen.routeName: (ctx) => const WelcomeScreen(),
+                  LoginScreen.routeName: (ctx) => const LoginScreen(),
+                  SignUpScreen.routeName: (ctx) => const SignUpScreen(),
+                  ForgotScreen.routeName: (ctx) => const ForgotScreen(),
+                  HomeScreen.routeName: (ctx) => const HomeScreen(),
+                  AccountScreen.routeName: (ctx) => const AccountScreen(),
+                  SearchScreen.routeName: (ctx) => const SearchScreen(),
+                  PlayingScreen.routeName: (ctx) => const PlayingScreen(),
+                  PlaylistScreen.routeName: (ctx) => const PlaylistScreen(),
+                  AllPlaylistsScreen.routeName: (ctx) => const AllPlaylistsScreen(),
+                  AdminScreen.routeName: (ctx) => const AdminScreen(),
+                  MusicManagerScreen.routeName: (ctx) => MusicManagerScreen(),
+                  PlaylistManagerScreen.routeName: (ctx) => const PlaylistManagerScreen(),
+                },
+              );
+            },
+          );
         });
   }
 }

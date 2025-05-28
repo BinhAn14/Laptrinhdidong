@@ -8,7 +8,8 @@ class ChannelCard extends StatelessWidget {
       : super(key: key);
 
   final Channel channel;
-  bool isStreaming;
+  // bool isStreaming;
+  final bool isStreaming;
 
   @override
   Widget build(BuildContext context) {
